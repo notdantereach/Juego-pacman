@@ -57,9 +57,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         // 1. Generar bolitas normales (10 pts) donde hay pasillo (ID 0)
+        int[][] mapTileNum = tileM.getMapTileNum();
         for (int row = 0; row < maxScreenRow; row++) {
             for (int col = 0; col < maxScreenCol; col++) {
-                if (tileM.mapTileNum[col][row] == 0) {
+                if (mapTileNum[col][row] == 0) {
                     int x = col * tileSize;
                     int y = row * tileSize;
                     scoreManager.addItem(x, y, 10, false);
