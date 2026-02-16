@@ -1,6 +1,11 @@
 package lospedros.edu.pacman.ui;
 
 import lospedros.edu.pacman.audio.SoundManager;
+import lospedros.edu.pacman.enemigos.Atacante;
+import lospedros.edu.pacman.enemigos.Blinky;
+import lospedros.edu.pacman.enemigos.Clyde;
+import lospedros.edu.pacman.enemigos.Inky;
+import lospedros.edu.pacman.enemigos.Pinky;
 import lospedros.edu.pacman.process.CollisionChecker;
 import lospedros.edu.pacman.process.Pacman;
 import lospedros.edu.pacman.process.ScoreManager;
@@ -38,6 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Entidades
     Pacman player = new Pacman(this, keyH);
+    private final Atacante[] enemigos;
     public int lives = 3;
 
     private final SoundManager soundManager = new SoundManager();
@@ -48,6 +54,13 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
+
+        enemigos = new Atacante[] {
+            new Blinky(tileSize * 10, tileSize * 11, 1),
+            new Pinky(tileSize * 9, tileSize * 11, 1),
+            new Inky(tileSize * 11, tileSize * 11, 1),
+            new Clyde(tileSize * 10, tileSize * 12, 1)
+        };
 
         setupGame();
         soundManager.playIntro();
@@ -94,6 +107,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         player.update();
+        for (Atacante enemigo : enemigos) {
+            enemigo.calcularSiguienteMovimiento(player.getX(), player.getY());
+        }
         checkItemCollision();
     }
 
@@ -150,6 +166,11 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Dibujar Pacman
         player.draw(g2);
+
+        // Dibujar Enemigos
+        for (Atacante enemigo : enemigos) {
+            enemigo.dibujar(g2);
+        }
 
         // UI: Score y Vidas
         g2.setColor(Color.yellow);
