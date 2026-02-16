@@ -58,6 +58,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     private final SoundManager soundManager = new SoundManager();
     private boolean juegoTerminado = false;
+    private boolean enInicio = true;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -122,6 +123,25 @@ public class GamePanel extends JPanel implements Runnable {
         if (juegoTerminado) {
             return;
         }
+
+        if (enInicio) {
+            if (keyH.enterPresionado) {
+                enInicio = false;
+                player.setDefaultValues();
+            }
+
+            for (Atacante enemigo : enemigos) {
+                int prevX = enemigo.getX();
+                int prevY = enemigo.getY();
+                enemigo.calcularSiguienteMovimiento(player.getX(), player.getY());
+                if (isEnemyColliding(enemigo)) {
+                    enemigo.setX(prevX);
+                    enemigo.setY(prevY);
+                }
+            }
+            return;
+        }
+
         player.update();
         for (Atacante enemigo : enemigos) {
             int prevX = enemigo.getX();
@@ -209,6 +229,12 @@ public class GamePanel extends JPanel implements Runnable {
             g2.setColor(Color.CYAN);
             g2.setFont(new Font("Arial", Font.ITALIC, 22));
             g2.drawString(bonusMessage, (screenWidth/2) - 60, (screenHeight/2) - 50);
+        }
+
+        if (enInicio) {
+            g2.setColor(Color.WHITE);
+            g2.setFont(new Font("Arial", Font.BOLD, 24));
+            g2.drawString("PRESIONA ENTER PARA INICIAR", (screenWidth / 2) - 190, (screenHeight / 2));
         }
 
         if (juegoTerminado) {
@@ -306,6 +332,5 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
 
-        return new int[] { 1, 1 };
+        return new int[] { 1, 1 }; // Default spawn location if none found
     }
-}
