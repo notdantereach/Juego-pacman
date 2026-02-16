@@ -33,10 +33,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     private static final int ENEMY_SIZE = 25;
     private final int[][] enemySpawns = new int[][] {
-        {10, 11},
-        {9, 11},
-        {11, 11},
-        {10, 12}
+        {10, 9},
+        {9, 9},
+        {11, 9},
+        {10, 10}
     };
 
     Thread gameThread;
