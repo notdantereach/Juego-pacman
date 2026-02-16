@@ -255,14 +255,14 @@ public class GamePanel extends JPanel implements Runnable {
         if (enInicio) {
             g2.setColor(Color.WHITE);
             g2.setFont(new Font("Arial", Font.BOLD, 24));
-            String inicioTexto = idiomaSeleccionado.equals(LANG_ES) ? "PRESIONA ENTER PARA INICIAR" : "PRESS ENTER TO START";
-            g2.drawString(inicioTexto, (screenWidth / 2) - 190, (screenHeight / 2));
+            String inicioTexto = idiomaSeleccionado.equals(LANG_ES) ? "INICIAR (ENTER)" : "START (ENTER)";
+            g2.drawString(inicioTexto, (screenWidth / 2) - 100, (screenHeight / 2));
 
             g2.setFont(new Font("Arial", Font.BOLD, 20));
             String idiomaTexto = idiomaSeleccionado.equals(LANG_ES)
-                    ? "IDIOMA: [ESPAÑOL] / ENGLISH"
-                    : "LANGUAGE: ENGLISH / [ESPAÑOL]";
-            g2.drawString(idiomaTexto, (screenWidth / 2) - 190, (screenHeight / 2) + 35);
+                    ? "IDIOMA: ESPAÑOL / ENGLISH"
+                    : "LANGUAGE: ENGLISH / ESPAÑOL";
+            g2.drawString(idiomaTexto, (screenWidth / 2) - 150, (screenHeight / 2) + 35);
 
             g2.setFont(new Font("Arial", Font.PLAIN, 16));
             String ayudaTexto = idiomaSeleccionado.equals(LANG_ES) ? "A/D para cambiar" : "A/D to change";
@@ -413,3 +413,4 @@ public class GamePanel extends JPanel implements Runnable {
             GameLocale.setLocale(idioma);
         }
     }
+}
