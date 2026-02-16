@@ -5,7 +5,10 @@ import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed;
+    public boolean arribaPresionado;
+    public boolean abajoPresionado;
+    public boolean izquierdaPresionada;
+    public boolean derechaPresionada;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -16,16 +19,16 @@ public class KeyHandler implements KeyListener {
         int code = e.getKeyCode();
 
         if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
-            upPressed = true;
+            arribaPresionado = true;
         }
         if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) {
-            downPressed = true;
+            abajoPresionado = true;
         }
         if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) {
-            leftPressed = true;
+            izquierdaPresionada = true;
         }
         if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
-            rightPressed = true;
+            derechaPresionada = true;
         }
     }
 
@@ -34,16 +37,16 @@ public class KeyHandler implements KeyListener {
         int code = e.getKeyCode();
 
         if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
-            upPressed = false;
+            arribaPresionado = false;
         }
         if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) {
-            downPressed = false;
+            abajoPresionado = false;
         }
         if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) {
-            leftPressed = false;
+            izquierdaPresionada = false;
         }
         if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
-            rightPressed = false;
+            derechaPresionada = false;
         }
     }
 }
