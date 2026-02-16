@@ -32,6 +32,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int screenHeight = tileSize * maxScreenRow;
 
     private static final int ENEMY_SIZE = 25;
+    private static final int MIN_SPAWN_DISTANCE_FROM_CENTER = 4;
     private static final int[][] ENEMY_SPAWN_OFFSETS = new int[][] {
         {0, 0},
         {-1, 0},
@@ -256,7 +257,7 @@ public class GamePanel extends JPanel implements Runnable {
         for (int i = 0; i < ENEMY_SPAWN_OFFSETS.length; i++) {
             int startCol = centerCol + ENEMY_SPAWN_OFFSETS[i][0];
             int startRow = centerRow + ENEMY_SPAWN_OFFSETS[i][1];
-            int[] spawn = findOpenSpawn(startCol, startRow, used);
+            int[] spawn = findOpenSpawn(startCol, startRow, centerCol, centerRow, MIN_SPAWN_DISTANCE_FROM_CENTER, used);
             spawns[i][0] = spawn[0];
             spawns[i][1] = spawn[1];
             used[spawn[0]][spawn[1]] = true;
@@ -265,17 +266,21 @@ public class GamePanel extends JPanel implements Runnable {
         return spawns;
     }
 
-    private int[] findOpenSpawn(int startCol, int startRow, boolean[][] used) {
+    private int[] findOpenSpawn(int startCol, int startRow, int centerCol, int centerRow, int minDistance, boolean[][] used) {
         int[][] mapTileNum = tileM.getMapTileNum();
         int maxRadius = Math.max(maxScreenCol, maxScreenRow);
 
-        for (int radius = 0; radius <= maxRadius; radius++) {
+        for (int radius = minDistance; radius <= maxRadius; radius++) {
             for (int row = startRow - radius; row <= startRow + radius; row++) {
                 for (int col = startCol - radius; col <= startCol + radius; col++) {
                     if (col < 0 || row < 0 || col >= maxScreenCol || row >= maxScreenRow) {
                         continue;
                     }
                     if (used[col][row]) {
+                        continue;
+                    }
+                    int distance = Math.abs(col - centerCol) + Math.abs(row - centerRow);
+                    if (distance < minDistance) {
                         continue;
                     }
                     if (mapTileNum[col][row] == 0) {
