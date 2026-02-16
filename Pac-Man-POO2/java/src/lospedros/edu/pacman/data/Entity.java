@@ -1,5 +1,8 @@
+package lospedros.edu.pacman.data;
+
+import java.awt.Rectangle;
+
 public class Entity {
-    // Private fields
     private int x;
     private int y;
     private int speed;
@@ -7,7 +10,6 @@ public class Entity {
     private Rectangle solidArea;
     private boolean collisionOn;
 
-    // Getters and Setters
     public int getX() {
         return x;
     }
