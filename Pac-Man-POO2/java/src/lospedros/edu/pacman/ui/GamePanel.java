@@ -32,12 +32,13 @@ public class GamePanel extends JPanel implements Runnable {
     public final int screenHeight = tileSize * maxScreenRow;
 
     private static final int ENEMY_SIZE = 25;
-    private final int[][] enemySpawns = new int[][] {
-        {10, 9},
-        {9, 9},
-        {11, 9},
-        {10, 10}
+    private static final int[][] ENEMY_SPAWN_OFFSETS = new int[][] {
+        {0, 0},
+        {-1, 0},
+        {1, 0},
+        {0, 1}
     };
+    private final int[][] enemySpawns;
 
     Thread gameThread;
     KeyHandler keyH = new KeyHandler();
@@ -62,6 +63,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
+
+        enemySpawns = initEnemySpawns();
 
         enemigos = new Atacante[] {
             new Blinky(tileSize * enemySpawns[0][0], tileSize * enemySpawns[0][1], 1),
@@ -242,5 +245,46 @@ public class GamePanel extends JPanel implements Runnable {
             enemigos[i].setX(tileSize * enemySpawns[i][0]);
             enemigos[i].setY(tileSize * enemySpawns[i][1]);
         }
+    }
+
+    private int[][] initEnemySpawns() {
+        int[][] spawns = new int[ENEMY_SPAWN_OFFSETS.length][2];
+        boolean[][] used = new boolean[maxScreenCol][maxScreenRow];
+        int centerCol = maxScreenCol / 2;
+        int centerRow = maxScreenRow / 2;
+
+        for (int i = 0; i < ENEMY_SPAWN_OFFSETS.length; i++) {
+            int startCol = centerCol + ENEMY_SPAWN_OFFSETS[i][0];
+            int startRow = centerRow + ENEMY_SPAWN_OFFSETS[i][1];
+            int[] spawn = findOpenSpawn(startCol, startRow, used);
+            spawns[i][0] = spawn[0];
+            spawns[i][1] = spawn[1];
+            used[spawn[0]][spawn[1]] = true;
+        }
+
+        return spawns;
+    }
+
+    private int[] findOpenSpawn(int startCol, int startRow, boolean[][] used) {
+        int[][] mapTileNum = tileM.getMapTileNum();
+        int maxRadius = Math.max(maxScreenCol, maxScreenRow);
+
+        for (int radius = 0; radius <= maxRadius; radius++) {
+            for (int row = startRow - radius; row <= startRow + radius; row++) {
+                for (int col = startCol - radius; col <= startCol + radius; col++) {
+                    if (col < 0 || row < 0 || col >= maxScreenCol || row >= maxScreenRow) {
+                        continue;
+                    }
+                    if (used[col][row]) {
+                        continue;
+                    }
+                    if (mapTileNum[col][row] == 0) {
+                        return new int[] { col, row };
+                    }
+                }
+            }
+        }
+
+        return new int[] { 1, 1 };
     }
 }
