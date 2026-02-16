@@ -31,6 +31,14 @@ public class GamePanel extends JPanel implements Runnable {
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
 
+    private static final int ENEMY_SIZE = 25;
+    private final int[][] enemySpawns = new int[][] {
+        {10, 11},
+        {9, 11},
+        {11, 11},
+        {10, 12}
+    };
+
     Thread gameThread;
     KeyHandler keyH = new KeyHandler();
     public TileManager tileM = new TileManager(this);
@@ -56,10 +64,10 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
 
         enemigos = new Atacante[] {
-            new Blinky(tileSize * 10, tileSize * 11, 1),
-            new Pinky(tileSize * 9, tileSize * 11, 1),
-            new Inky(tileSize * 11, tileSize * 11, 1),
-            new Clyde(tileSize * 10, tileSize * 12, 1)
+            new Blinky(tileSize * enemySpawns[0][0], tileSize * enemySpawns[0][1], 1),
+            new Pinky(tileSize * enemySpawns[1][0], tileSize * enemySpawns[1][1], 1),
+            new Inky(tileSize * enemySpawns[2][0], tileSize * enemySpawns[2][1], 1),
+            new Clyde(tileSize * enemySpawns[3][0], tileSize * enemySpawns[3][1], 1)
         };
 
         setupGame();
@@ -108,7 +116,17 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         player.update();
         for (Atacante enemigo : enemigos) {
+            int prevX = enemigo.getX();
+            int prevY = enemigo.getY();
             enemigo.calcularSiguienteMovimiento(player.getX(), player.getY());
+            if (isEnemyColliding(enemigo)) {
+                enemigo.setX(prevX);
+                enemigo.setY(prevY);
+            }
+            if (isEnemyHittingPlayer(enemigo)) {
+                handlePlayerHit();
+                break;
+            }
         }
         checkItemCollision();
     }
@@ -186,5 +204,43 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         g2.dispose();
+    }
+
+    private boolean isEnemyColliding(Atacante enemigo) {
+        int leftCol = enemigo.getX() / tileSize;
+        int rightCol = (enemigo.getX() + ENEMY_SIZE - 1) / tileSize;
+        int topRow = enemigo.getY() / tileSize;
+        int bottomRow = (enemigo.getY() + ENEMY_SIZE - 1) / tileSize;
+
+        return isWallTile(leftCol, topRow)
+            || isWallTile(rightCol, topRow)
+            || isWallTile(leftCol, bottomRow)
+            || isWallTile(rightCol, bottomRow);
+    }
+
+    private boolean isWallTile(int col, int row) {
+        if (col < 0 || row < 0 || col >= maxScreenCol || row >= maxScreenRow) {
+            return true;
+        }
+        int tileNum = tileM.getMapTileNum()[col][row];
+        return tileM.getTile(tileNum) != null && tileM.getTile(tileNum).isCollision();
+    }
+
+    private boolean isEnemyHittingPlayer(Atacante enemigo) {
+        return Math.abs(enemigo.getX() - player.getX()) < tileSize / 2
+            && Math.abs(enemigo.getY() - player.getY()) < tileSize / 2;
+    }
+
+    private void handlePlayerHit() {
+        lives = Math.max(0, lives - 1);
+        player.setDefaultValues();
+        resetEnemyPositions();
+    }
+
+    private void resetEnemyPositions() {
+        for (int i = 0; i < enemigos.length; i++) {
+            enemigos[i].setX(tileSize * enemySpawns[i][0]);
+            enemigos[i].setY(tileSize * enemySpawns[i][1]);
+        }
     }
 }
