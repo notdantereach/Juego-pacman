@@ -99,14 +99,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void checkItemCollision() {
         for (Item item : scoreManager.getItems()) {
-            if (!item.collected) {
-                if (Math.abs(player.x - item.x) < tileSize/2 && Math.abs(player.y - item.y) < tileSize/2) {
-                    item.collected = true;
-                    scoreManager.addPoints(item.points);
+            if (!item.isCollected()) {
+                if (Math.abs(player.getX() - item.getX()) < tileSize / 2 && Math.abs(player.getY() - item.getY()) < tileSize / 2) {
+                    item.setCollected(true);
+                    scoreManager.addPoints(item.getPoints());
                     soundManager.playChomp();
 
                     // Si es cereza, activar mensaje de bono
-                    if(item.isBonus) {
+                    if (item.isBonus()) {
                         bonusMessage = "¡BONO +100!";
                         bonusTimer = 90; // Visible por 1.5 segundos
                         soundManager.playBonus();
@@ -133,17 +133,17 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Dibujar Bolitas y Cerezas
         for (Item item : scoreManager.getItems()) {
-            if (!item.collected) {
-                if (item.isBonus) {
+            if (!item.isCollected()) {
+                if (item.isBonus()) {
                     // Dibujo de Cereza (Dos círculos rojos y tallo)
                     g2.setColor(Color.red);
-                    g2.fillOval(item.x + 4, item.y + 10, 12, 12);
-                    g2.fillOval(item.x + 16, item.y + 10, 12, 12);
+                    g2.fillOval(item.getX() + 4, item.getY() + 10, 12, 12);
+                    g2.fillOval(item.getX() + 16, item.getY() + 10, 12, 12);
                     g2.setColor(Color.green);
-                    g2.fillRect(item.x + 14, item.y + 4, 4, 8);
+                    g2.fillRect(item.getX() + 14, item.getY() + 4, 4, 8);
                 } else {
                     g2.setColor(Color.white);
-                    g2.fillOval(item.x + 13, item.y + 13, 6, 6);
+                    g2.fillOval(item.getX() + 13, item.getY() + 13, 6, 6);
                 }
             }
         }
