@@ -6,11 +6,28 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 
-public class SoundManager {
+public class SoundManager implements SoundPlayer {
     private static final float SAMPLE_RATE = 44100f;
+    private final boolean audioHabilitado;
     private Clip sirenClip;
 
+    public SoundManager() {
+        this(true);
+    }
+
+    public SoundManager(boolean audioHabilitado) {
+        this.audioHabilitado = audioHabilitado;
+    }
+
+    public boolean isAudioHabilitado() {
+        return audioHabilitado;
+    }
+
+    @Override
     public void playIntro() {
+        if (!audioHabilitado) {
+            return;
+        }
         new Thread(() -> {
             playToneBlocking(440, 180, 0.6);
             sleep(60);
@@ -20,19 +37,35 @@ public class SoundManager {
         }, "Pacman-Intro-Sound").start();
     }
 
+    @Override
     public void playChomp() {
+        if (!audioHabilitado) {
+            return;
+        }
         playTone(820, 70, 0.5);
     }
 
+    @Override
     public void playBonus() {
+        if (!audioHabilitado) {
+            return;
+        }
         playTone(1200, 150, 0.7);
     }
 
+    @Override
     public void playDeath() {
+        if (!audioHabilitado) {
+            return;
+        }
         playTone(240, 500, 0.8);
     }
 
+    @Override
     public void startSirenLoop() {
+        if (!audioHabilitado) {
+            return;
+        }
         if (sirenClip != null && sirenClip.isRunning()) {
             return;
         }
@@ -40,6 +73,7 @@ public class SoundManager {
         sirenClip.loop(Clip.LOOP_CONTINUOUSLY);
     }
 
+    @Override
     public void stopSirenLoop() {
         if (sirenClip != null) {
             sirenClip.stop();
@@ -88,7 +122,7 @@ public class SoundManager {
             clip.open(format, data, 0, data.length);
             return clip;
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to load audio", e);
+            throw new IllegalStateException("No se pudo cargar el audio", e);
         }
     }
 
