@@ -9,6 +9,7 @@ public class KeyHandler implements KeyListener {
     public boolean abajoPresionado;
     public boolean izquierdaPresionada;
     public boolean derechaPresionada;
+    public boolean enterPresionado;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -30,6 +31,9 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
             derechaPresionada = true;
         }
+        if (code == KeyEvent.VK_ENTER) {
+            enterPresionado = true;
+        }
     }
 
     @Override
@@ -47,6 +51,9 @@ public class KeyHandler implements KeyListener {
         }
         if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
             derechaPresionada = false;
+        }
+        if (code == KeyEvent.VK_ENTER) {
+            enterPresionado = false;
         }
     }
 }
