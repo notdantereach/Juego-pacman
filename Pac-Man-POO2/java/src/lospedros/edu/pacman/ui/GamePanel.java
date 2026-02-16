@@ -57,6 +57,7 @@ public class GamePanel extends JPanel implements Runnable {
     public int lives = 3;
 
     private final SoundManager soundManager = new SoundManager();
+    private boolean juegoTerminado = false;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -118,6 +119,9 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+        if (juegoTerminado) {
+            return;
+        }
         player.update();
         for (Atacante enemigo : enemigos) {
             int prevX = enemigo.getX();
@@ -207,6 +211,12 @@ public class GamePanel extends JPanel implements Runnable {
             g2.drawString(bonusMessage, (screenWidth/2) - 60, (screenHeight/2) - 50);
         }
 
+        if (juegoTerminado) {
+            g2.setColor(Color.RED);
+            g2.setFont(new Font("Arial", Font.BOLD, 36));
+            g2.drawString("FIN DEL JUEGO", (screenWidth / 2) - 130, (screenHeight / 2));
+        }
+
         g2.dispose();
     }
 
@@ -237,6 +247,12 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void handlePlayerHit() {
         lives = Math.max(0, lives - 1);
+        if (lives == 0) {
+            juegoTerminado = true;
+            soundManager.stopSirenLoop();
+            soundManager.playDeath();
+            return;
+        }
         player.setDefaultValues();
         resetEnemyPositions();
     }
