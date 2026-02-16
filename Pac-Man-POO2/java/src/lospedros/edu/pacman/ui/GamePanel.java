@@ -40,6 +40,8 @@ public class GamePanel extends JPanel implements Runnable {
             {1, 0},
             {0, 1}
     };
+    private static final String LANG_ES = "es";
+    private static final String LANG_EN = "en";
     private final int[][] enemySpawns;
 
     Thread gameThread;
@@ -62,6 +64,7 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean enInicio = true;
     private final Random random = new Random();
     private int[][] objetivosInicio;
+    private String idiomaSeleccionado = LANG_ES;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -79,6 +82,7 @@ public class GamePanel extends JPanel implements Runnable {
                 new Clyde(tileSize * enemySpawns[3][0], tileSize * enemySpawns[3][1], 1)
         };
 
+        GameLocale.setLocale(idiomaSeleccionado);
         initObjetivosInicio();
         setupGame();
         soundManager.playIntro();
@@ -129,6 +133,15 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         if (enInicio) {
+            if (keyH.izquierdaPresionada) {
+                setIdioma(LANG_ES);
+                keyH.izquierdaPresionada = false;
+            }
+            if (keyH.derechaPresionada) {
+                setIdioma(LANG_EN);
+                keyH.derechaPresionada = false;
+            }
+
             if (keyH.enterPresionado) {
                 enInicio = false;
                 player.setDefaultValues();
@@ -242,7 +255,18 @@ public class GamePanel extends JPanel implements Runnable {
         if (enInicio) {
             g2.setColor(Color.WHITE);
             g2.setFont(new Font("Arial", Font.BOLD, 24));
-            g2.drawString("PRESIONA ENTER PARA INICIAR", (screenWidth / 2) - 190, (screenHeight / 2));
+            String inicioTexto = idiomaSeleccionado.equals(LANG_ES) ? "PRESIONA ENTER PARA INICIAR" : "PRESS ENTER TO START";
+            g2.drawString(inicioTexto, (screenWidth / 2) - 190, (screenHeight / 2));
+
+            g2.setFont(new Font("Arial", Font.BOLD, 20));
+            String idiomaTexto = idiomaSeleccionado.equals(LANG_ES)
+                    ? "IDIOMA: [ESPAÑOL] / ENGLISH"
+                    : "LANGUAGE: ENGLISH / [ESPAÑOL]";
+            g2.drawString(idiomaTexto, (screenWidth / 2) - 190, (screenHeight / 2) + 35);
+
+            g2.setFont(new Font("Arial", Font.PLAIN, 16));
+            String ayudaTexto = idiomaSeleccionado.equals(LANG_ES) ? "A/D para cambiar" : "A/D to change";
+            g2.drawString(ayudaTexto, (screenWidth / 2) - 70, (screenHeight / 2) + 60);
         }
 
         if (juegoTerminado) {
@@ -382,4 +406,10 @@ public class GamePanel extends JPanel implements Runnable {
             asignarNuevoObjetivoInicio(index);
         }
     }
-}
+
+    private void setIdioma(String idioma) {
+        if (!idiomaSeleccionado.equals(idioma)) {
+            idiomaSeleccionado = idioma;
+            GameLocale.setLocale(idioma);
+        }
+    }
