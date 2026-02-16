@@ -1,5 +1,6 @@
 package lospedros.edu.pacman.ui;
 
+import lospedros.edu.pacman.audio.SoundManager;
 import lospedros.edu.pacman.process.CollisionChecker;
 import lospedros.edu.pacman.process.Pacman;
 import lospedros.edu.pacman.process.ScoreManager;
@@ -39,6 +40,8 @@ public class GamePanel extends JPanel implements Runnable {
     Pacman player = new Pacman(this, keyH);
     public int lives = 3;
 
+    private final SoundManager soundManager = new SoundManager();
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
@@ -47,6 +50,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
 
         setupGame();
+        soundManager.playIntro();
+        soundManager.startSirenLoop();
         startGameThread();
     }
 
@@ -97,11 +102,13 @@ public class GamePanel extends JPanel implements Runnable {
                 if (Math.abs(player.x - item.x) < tileSize/2 && Math.abs(player.y - item.y) < tileSize/2) {
                     item.collected = true;
                     scoreManager.addPoints(item.points);
+                    soundManager.playChomp();
 
                     // Si es cereza, activar mensaje de bono
                     if(item.isBonus) {
                         bonusMessage = "¡BONO +100!";
                         bonusTimer = 90; // Visible por 1.5 segundos
+                        soundManager.playBonus();
                     }
                 }
             }
