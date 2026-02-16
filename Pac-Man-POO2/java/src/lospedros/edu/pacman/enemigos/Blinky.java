@@ -1,6 +1,6 @@
 package lospedros.edu.pacman.enemigos;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class Blinky extends Atacante {
     public Blinky(int x, int y, int velocidad) {
@@ -9,10 +9,16 @@ public class Blinky extends Atacante {
 
     @Override
     public void calcularSiguienteMovimiento(int pacmanX, int pacmanY) {
-        if (this.x < pacmanX) this.x += velocidad;
-        else if (this.x > pacmanX) this.x -= velocidad;
+        if (getX() < pacmanX) {
+            setX(getX() + getVelocidad());
+        } else if (getX() > pacmanX) {
+            setX(getX() - getVelocidad());
+        }
 
-        if (this.y < pacmanY) this.y += velocidad;
-        else if (this.y > pacmanY) this.y -= velocidad;
+        if (getY() < pacmanY) {
+            setY(getY() + getVelocidad());
+        } else if (getY() > pacmanY) {
+            setY(getY() - getVelocidad());
+        }
     }
 }
