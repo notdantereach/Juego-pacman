@@ -1,6 +1,6 @@
 package lospedros.edu.pacman.enemigos;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class Clyde extends Atacante {
     public Clyde(int x, int y, int velocidad) {
@@ -12,13 +12,23 @@ public class Clyde extends Atacante {
         double distancia = calcularDistancia(pacmanX, pacmanY);
 
         if (distancia < 120) { // Si está cerca, huye a la esquina inferior
-            if (this.x > 0) this.x -= velocidad;
-            if (this.y < 500) this.y += velocidad;
+            if (getX() > 0) {
+                setX(getX() - getVelocidad());
+            }
+            if (getY() < 500) {
+                setY(getY() + getVelocidad());
+            }
         } else { // Si está lejos, persigue
-            if (this.x < pacmanX) this.x += velocidad;
-            else if (this.x > pacmanX) this.x -= velocidad;
-            if (this.y < pacmanY) this.y += velocidad;
-            else if (this.y > pacmanY) this.y -= velocidad;
+            if (getX() < pacmanX) {
+                setX(getX() + getVelocidad());
+            } else if (getX() > pacmanX) {
+                setX(getX() - getVelocidad());
+            }
+            if (getY() < pacmanY) {
+                setY(getY() + getVelocidad());
+            } else if (getY() > pacmanY) {
+                setY(getY() - getVelocidad());
+            }
         }
     }
 }
