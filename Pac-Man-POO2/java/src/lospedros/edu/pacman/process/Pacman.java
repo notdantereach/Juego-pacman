@@ -12,24 +12,24 @@ public class Pacman extends Entity {
 
     GamePanel gp;
     KeyHandler keyH;
-    
+
     public String nextDirection;
 
     public Pacman(GamePanel gp, KeyHandler keyH) {
         this.gp = gp;
         this.keyH = keyH;
-        
+
         // Hitbox setup (20x20 centered in 32x32 tile)
-        solidArea = new Rectangle(6, 6, 20, 20); 
-        
+        setSolidArea(new Rectangle(6, 6, 20, 20));
+
         setDefaultValues();
     }
 
     public void setDefaultValues() {
-        x = gp.tileSize * 1; 
-        y = gp.tileSize * 1;
-        speed = 2;
-        direction = "right";
+        setX(gp.tileSize * 1);
+        setY(gp.tileSize * 1);
+        setSpeed(2);
+        setDirection("right");
         nextDirection = "right";
     }
 
@@ -42,66 +42,75 @@ public class Pacman extends Entity {
 
         // Check if we can turn
         boolean canTurn = false;
-        
+
         // Allow turning if we are close to the center of the tile
-        int xRem = x % gp.tileSize;
-        int yRem = y % gp.tileSize;
-        
+        int xRem = getX() % gp.tileSize;
+        int yRem = getY() % gp.tileSize;
+        int speed = getSpeed();
+
         // Tolerance logic: if remainder is small (less than speed), consider it aligned
         if (Math.abs(xRem) < speed && Math.abs(yRem) < speed) {
             canTurn = true;
         }
 
         if (canTurn) {
-            String prevDir = direction;
-            direction = nextDirection;
-            
+            String prevDir = getDirection();
+            setDirection(nextDirection);
+
             // Check collision in the NEW direction
-            collisionOn = false;
+            setCollisionOn(false);
             gp.cChecker.checkTile(this);
-            
-            if (collisionOn) {
+
+            if (isCollisionOn()) {
                 // If we can't move in nextDirection, revert to previous
-                direction = prevDir;
+                setDirection(prevDir);
             } else {
                 // If turn is successful, snap to exact grid to prevent drift
                 // This ensures we are perfectly aligned for the new axis
-                if (direction.equals("up") || direction.equals("down")) {
-                    x = (x + gp.tileSize/2) / gp.tileSize * gp.tileSize;
+                if (getDirection().equals("up") || getDirection().equals("down")) {
+                    setX((getX() + gp.tileSize / 2) / gp.tileSize * gp.tileSize);
                 } else {
-                    y = (y + gp.tileSize/2) / gp.tileSize * gp.tileSize;
+                    setY((getY() + gp.tileSize / 2) / gp.tileSize * gp.tileSize);
                 }
             }
-        } else if (isOpposite(direction, nextDirection)) {
+        } else if (isOpposite(getDirection(), nextDirection)) {
             // Allow immediate U-turn anywhere
-            direction = nextDirection;
+            setDirection(nextDirection);
         }
 
         // Move in current direction
-        collisionOn = false;
+        setCollisionOn(false);
         gp.cChecker.checkTile(this);
 
-        if (!collisionOn) {
-            switch (direction) {
-                case "up": y -= speed; break;
-                case "down": y += speed; break;
-                case "left": x -= speed; break;
-                case "right": x += speed; break;
+        if (!isCollisionOn()) {
+            switch (getDirection()) {
+                case "up":
+                    setY(getY() - speed);
+                    break;
+                case "down":
+                    setY(getY() + speed);
+                    break;
+                case "left":
+                    setX(getX() - speed);
+                    break;
+                case "right":
+                    setX(getX() + speed);
+                    break;
             }
         } else {
             // COLLISION DETECTED
             // Snap to the nearest grid position to ensure we can turn next time
-            int snapX = (x + gp.tileSize / 2) / gp.tileSize * gp.tileSize;
-            int snapY = (y + gp.tileSize / 2) / gp.tileSize * gp.tileSize;
-            x = snapX;
-            y = snapY;
+            int snapX = (getX() + gp.tileSize / 2) / gp.tileSize * gp.tileSize;
+            int snapY = (getY() + gp.tileSize / 2) / gp.tileSize * gp.tileSize;
+            setX(snapX);
+            setY(snapY);
         }
-        
+
         // Handle tunnel
-        if (x < -gp.tileSize) x = gp.screenWidth;
-        if (x > gp.screenWidth) x = -gp.tileSize;
+        if (getX() < -gp.tileSize) setX(gp.screenWidth);
+        if (getX() > gp.screenWidth) setX(-gp.tileSize);
     }
-    
+
     private boolean isOpposite(String dir1, String dir2) {
         if (dir1.equals("up") && dir2.equals("down")) return true;
         if (dir1.equals("down") && dir2.equals("up")) return true;
@@ -112,6 +121,6 @@ public class Pacman extends Entity {
 
     public void draw(Graphics2D g2) {
         g2.setColor(Color.yellow);
-        g2.fillOval(x, y, gp.tileSize, gp.tileSize);
+        g2.fillOval(getX(), getY(), gp.tileSize, gp.tileSize);
     }
 }
