@@ -35,6 +35,9 @@ public class CollisionChecker {
         switch (entity.getDirection()) {
             case "up":
                 entityTopRow = (entityTopWorldY - speed) / gp.tileSize;
+                if (isOutOfBounds(entityLeftCol, entityTopRow) || isOutOfBounds(entityRightCol, entityTopRow)) {
+                    return;
+                }
                 tileNum1 = mapTileNum[entityLeftCol][entityTopRow];
                 tileNum2 = mapTileNum[entityRightCol][entityTopRow];
                 if (isTileCollision(tileNum1) || isTileCollision(tileNum2)) {
@@ -43,6 +46,9 @@ public class CollisionChecker {
                 break;
             case "down":
                 entityBottomRow = (entityBottomWorldY + speed) / gp.tileSize;
+                if (isOutOfBounds(entityLeftCol, entityBottomRow) || isOutOfBounds(entityRightCol, entityBottomRow)) {
+                    return;
+                }
                 tileNum1 = mapTileNum[entityLeftCol][entityBottomRow];
                 tileNum2 = mapTileNum[entityRightCol][entityBottomRow];
                 if (isTileCollision(tileNum1) || isTileCollision(tileNum2)) {
@@ -51,6 +57,9 @@ public class CollisionChecker {
                 break;
             case "left":
                 entityLeftCol = (entityLeftWorldX - speed) / gp.tileSize;
+                if (isOutOfBounds(entityLeftCol, entityTopRow) || isOutOfBounds(entityLeftCol, entityBottomRow)) {
+                    return;
+                }
                 tileNum1 = mapTileNum[entityLeftCol][entityTopRow];
                 tileNum2 = mapTileNum[entityLeftCol][entityBottomRow];
                 if (isTileCollision(tileNum1) || isTileCollision(tileNum2)) {
@@ -59,6 +68,9 @@ public class CollisionChecker {
                 break;
             case "right":
                 entityRightCol = (entityRightWorldX + speed) / gp.tileSize;
+                if (isOutOfBounds(entityRightCol, entityTopRow) || isOutOfBounds(entityRightCol, entityBottomRow)) {
+                    return;
+                }
                 tileNum1 = mapTileNum[entityRightCol][entityTopRow];
                 tileNum2 = mapTileNum[entityRightCol][entityBottomRow];
                 if (isTileCollision(tileNum1) || isTileCollision(tileNum2)) {
@@ -66,6 +78,10 @@ public class CollisionChecker {
                 }
                 break;
         }
+    }
+
+    private boolean isOutOfBounds(int col, int row) {
+        return col < 0 || row < 0 || col >= gp.maxScreenCol || row >= gp.maxScreenRow;
     }
 
     private boolean isTileCollision(int tileNum) {
